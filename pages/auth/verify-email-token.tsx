@@ -12,15 +12,11 @@ VerifyEmailToken.getLayout = function getLayout(page: ReactElement) {
   return <>{page}</>;
 };
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  // ✅ Avoid crashing the build
-  if (!context.req || !context.query) {
-    return {
-      props: {},
-    };
-  }
-
-  const { token } = context.query as { token: string };
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const { query } = context;
+  const token = query.token as string;
 
   if (!token) {
     return { notFound: true };
@@ -64,16 +60,14 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       },
     };
   } catch (error) {
-    console.error('Verification error:', error);
+    console.error('Error verifying token:', error);
     return {
       redirect: {
-        destination: '/auth/login?error=server-error',
+        destination: '/auth/login?error=internal-error',
         permanent: false,
       },
     };
   }
 };
-
-
 
 export default VerifyEmailToken;
