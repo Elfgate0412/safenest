@@ -13,13 +13,19 @@ VerifyEmailToken.getLayout = function getLayout(page: ReactElement) {
 };
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  // Required to prevent crash during static export
+  if (!context.req || !context.query) {
+    return {
+      props: {}, // Return empty props safely
+    };
+  }
+
+  const token = context.query.token;
+  if (!token || typeof token !== 'string') {
+    return { notFound: true };
+  }
+
   try {
-    const token = context?.query?.token;
-
-    if (!token || typeof token !== 'string') {
-      return { notFound: true };
-    }
-
     const verificationToken = await prisma.verificationToken.findFirst({
       where: { token },
     });
@@ -56,8 +62,8 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
         permanent: false,
       },
     };
-  } catch (err) {
-    console.error('[verify-email-token] SSR error:', err);
+  } catch (error) {
+    console.error('[VERIFY_EMAIL_TOKEN_ERROR]', error);
     return { notFound: true };
   }
 };
