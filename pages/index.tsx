@@ -18,6 +18,7 @@ const mockRooms = [
     location: 'Sydney, NSW',
     description: 'Bright and modern private room within walking distance to Macquarie University.',
     images: [sharedImage1, sharedImage2],
+    features: ['Private bathroom', 'Study desk', 'Wi-Fi included'],
   },
   {
     id: 2,
@@ -26,6 +27,7 @@ const mockRooms = [
     location: 'Kensington, NSW',
     description: 'Comfortable shared space close to UNSW and all major transport.',
     images: [sharedImage2, sharedImage1],
+    features: ['Shared kitchen', 'Air conditioning', 'Close to transport'],
   },
   {
     id: 3,
@@ -33,7 +35,8 @@ const mockRooms = [
     price: 260,
     location: 'Chatswood, NSW',
     description: 'Enjoy a family-style homestay with your own ensuite and meals included.',
-    images: [sharedImage1, sharedImage1], // intentionally duplicated for demo
+    images: [sharedImage1, sharedImage1],
+    features: ['Ensuite', 'Meals included', 'Quiet neighborhood'],
   },
 ];
 
