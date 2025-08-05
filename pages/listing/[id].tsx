@@ -5,36 +5,33 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { Carousel } from 'react-responsive-carousel';
 
+const sharedImage1 = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80';
+const sharedImage2 = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80';
+
 const mockRooms = [
   {
     id: 1,
     title: 'Private Room near Macquarie Uni',
     price: 220,
-    images: [
-      'https://images.unsplash.com/photo-1560448075-bb975b6edc00?auto=format&fit=crop&w=800&q=60',
-      'https://images.unsplash.com/photo-1598928506311-2bda3d3c0c92?auto=format&fit=crop&w=800&q=60',
-    ],
     location: 'Sydney, NSW',
+    description: 'Bright and modern private room within walking distance to Macquarie University.',
+    images: [sharedImage1, sharedImage2],
   },
   {
     id: 2,
     title: 'Shared Apartment near UNSW',
     price: 180,
-    images: [
-      'https://images.unsplash.com/photo-1615874959474-df46c1edaca8?auto=format&fit=crop&w=800&q=60',
-      'https://images.unsplash.com/photo-1586105251261-72a756497a12?auto=format&fit=crop&w=800&q=60',
-    ],
     location: 'Kensington, NSW',
+    description: 'Comfortable shared space close to UNSW and all major transport.',
+    images: [sharedImage2, sharedImage1],
   },
   {
     id: 3,
     title: 'Homestay with Ensuite',
     price: 260,
-    images: [
-      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=60',
-      'https://images.unsplash.com/photo-1600585154206-9305b99a8875?auto=format&fit=crop&w=800&q=60',
-    ],
     location: 'Chatswood, NSW',
+    description: 'Enjoy a family-style homestay with your own ensuite and meals included.',
+    images: [sharedImage1, sharedImage1], // intentionally duplicated for demo
   },
 ];
 
