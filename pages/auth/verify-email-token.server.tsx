@@ -5,7 +5,7 @@ import type { GetServerSidePropsContext } from 'next';
 import type { ReactElement } from 'react';
 
 const VerifyEmailToken = () => {
-  return <p>Verifying token...</p>;
+  return <></>;
 };
 
 VerifyEmailToken.getLayout = function getLayout(page: ReactElement) {
@@ -13,53 +13,67 @@ VerifyEmailToken.getLayout = function getLayout(page: ReactElement) {
 };
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  try {
-    const token = context?.query?.token;
+  // 🛡️ Early return to avoid build-time failures
+  if (!context.req || !context.query) {
+    return {
+      props: {},
+    };
+  }
 
-    if (!token || typeof token !== 'string') {
-      return { notFound: true };
-    }
+  const { token } = context.query as { token: string };
 
-    const verificationToken = await prisma.verificationToken.findFirst({
-      where: { token },
-    });
+  if (!token) {
+    return {
+      notFound: true,
+    };
+  }
 
-    if (!verificationToken) {
-      return {
-        redirect: {
-          destination: '/auth/login?error=token-not-found',
-          permanent: false,
-        },
-      };
-    }
+  const verificationToken = await prisma.verificationToken.findFirst({
+    where: {
+      token,
+    },
+  });
 
-    if (new Date() > verificationToken.expires) {
-      return {
-        redirect: {
-          destination: '/auth/login?error=token-expired',
-          permanent: false,
-        },
-      };
-    }
-
-    await Promise.allSettled([
-      prisma.user.update({
-        where: { email: verificationToken.identifier },
-        data: { emailVerified: new Date() },
-      }),
-      prisma.verificationToken.delete({ where: { token } }),
-    ]);
-
+  if (!verificationToken) {
     return {
       redirect: {
-        destination: '/auth/login?success=email-verified',
+        destination: '/auth/login?error=token-not-found',
         permanent: false,
       },
     };
-  } catch (err) {
-    console.error('[verify-email-token] SSR error:', err);
-    return { notFound: true };
   }
+
+  if (new Date() > verificationToken.expires) {
+    return {
+      redirect: {
+        destination: '/auth/login?error=token-expired',
+        permanent: false,
+      },
+    };
+  }
+
+  await Promise.allSettled([
+    prisma.user.update({
+      where: {
+        email: verificationToken?.identifier,
+      },
+      data: {
+        emailVerified: new Date(),
+      },
+    }),
+    prisma.verificationToken.delete({
+      where: {
+        token,
+      },
+    }),
+  ]);
+
+  return {
+    redirect: {
+      destination: '/auth/login?success=email-verified',
+      permanent: false,
+    },
+  };
 };
 
 export default VerifyEmailToken;
