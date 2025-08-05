@@ -10,20 +10,18 @@ VerifyEmailToken.getLayout = function getLayout(page: ReactElement) {
   return <>{page}</>;
 };
 
-export const getServerSideProps = async ({ query, req }: GetServerSidePropsContext) => {
-  // Avoid running during `next build`
-  if (!req || !query) {
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  // ✅ Avoid crashing the build
+  if (!context.req || !context.query) {
     return {
       props: {},
     };
   }
 
-  const { token } = query as { token: string };
+  const { token } = context.query as { token: string };
 
   if (!token) {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 
   try {
@@ -54,9 +52,7 @@ export const getServerSideProps = async ({ query, req }: GetServerSidePropsConte
         where: { email: verificationToken.identifier },
         data: { emailVerified: new Date() },
       }),
-      prisma.verificationToken.delete({
-        where: { token },
-      }),
+      prisma.verificationToken.delete({ where: { token } }),
     ]);
 
     return {
@@ -66,7 +62,7 @@ export const getServerSideProps = async ({ query, req }: GetServerSidePropsConte
       },
     };
   } catch (error) {
-    console.error('Email verification failed:', error);
+    console.error('Verification error:', error);
     return {
       redirect: {
         destination: '/auth/login?error=server-error',
@@ -75,6 +71,7 @@ export const getServerSideProps = async ({ query, req }: GetServerSidePropsConte
     };
   }
 };
+
 
 
 export default VerifyEmailToken;
