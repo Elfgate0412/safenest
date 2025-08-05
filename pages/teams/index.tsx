@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Button } from 'react-daisyui';
 import type { NextPageWithLayout } from 'types';
+import FeatureSection from '@/components/FeatureSection';
 
 const AllTeams: NextPageWithLayout = () => {
   const [visible, setVisible] = useState(false);
